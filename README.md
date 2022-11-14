@@ -126,3 +126,31 @@ $ sudo iptables -S FORWARD -v #Example
 ```console
 # iptables -Z INPUT
 ```
+
+- Informacion completa -> https://www.redeszone.net/tutoriales/seguridad/iptables-firewall-linux-configuracion/
+
+## EXAMPLE | Script para hacer **nat script** en el bastion para acceder a un rds.
+
+```bash
+#!/bin/bash
+
+#sudo su -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+
+sudo iptables -F
+sudo iptables -X
+sudo iptables -t nat -F
+sudo iptables -t nat -X
+sudo iptables -t mangle -F
+sudo iptables -t mangle -X
+sudo iptables -P INPUT ACCEPT
+sudo iptables -P FORWARD ACCEPT
+sudo iptables -P OUTPUT ACCEPT
+sudo service network restart
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+
+# RDS
+#IP_RDS=$(dig +short prod-rds-backdb.cj7xmzbscfxx.us-east-1.rds.amazonaws.com)
+sudo iptables -t nat -A PREROUTING -p tcp --dport 5432 -j DNAT --to-destination 192.168.143.237:5432
+
+sudo iptables -t nat -A POSTROUTING -j MASQUERADE
+```
