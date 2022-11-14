@@ -1,4 +1,4 @@
-# IPTables
+# IPTables | Con soporte casi nulo, actualmente se esta usando NFTables, se considera una version mejorada a IPTables.
 
 ## Tablas
 
